@@ -54,13 +54,8 @@ class LegalIndexBuilder:
             
         logger.info(f"Generated {len(chunks)} chunks with parent legal citations.")
         
-        # Step 2: Ensure Qdrant collection exists (delete and recreate to clear stale/misspelled points)
-        logger.info("Step 2: Preparing remote vector store collection (recreating to purge old entries)...")
-        try:
-            self.vector_store.client.delete_collection(self.collection_name)
-            logger.info(f"Purged stale collection '{self.collection_name}' from Qdrant.")
-        except Exception as delete_err:
-            logger.warning(f"Could not delete collection (may not exist yet): {delete_err}")
+        # Step 2: Ensure Qdrant collection exists
+        logger.info("Step 2: Preparing remote vector store collection...")
             
         dim = self.embedder.get_embedding_dimension()
         if not self.vector_store.ensure_collection_exists(self.collection_name, dim):

@@ -4,8 +4,9 @@ import logging
 from typing import List
 from dotenv import load_dotenv
 
-# Load env credentials
-load_dotenv()
+# Load env credentials from data_pipeline/.env
+env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.env"))
+load_dotenv(env_path)
 
 logger = logging.getLogger("embedder")
 

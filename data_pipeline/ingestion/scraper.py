@@ -1,9 +1,13 @@
 import requests
+import urllib3
 from bs4 import BeautifulSoup
 import urllib.parse
 import os
 import sys
 import logging
+
+# Disable SSL verification warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Add workspace to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -24,7 +28,7 @@ logger = logging.getLogger("scraper")
 def get_soup(url: str) -> BeautifulSoup:
     """Fetches a URL and returns a BeautifulSoup object."""
     try:
-        response = requests.get(url, headers=DEFAULT_HEADERS, timeout=TIMEOUT_SECONDS)
+        response = requests.get(url, headers=DEFAULT_HEADERS, timeout=TIMEOUT_SECONDS, verify=False)
         response.raise_for_status()
         return BeautifulSoup(response.content, 'lxml')
     except Exception as e:

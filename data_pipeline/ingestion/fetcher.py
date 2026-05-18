@@ -1,10 +1,14 @@
 import os
 import sys
 import requests
+import urllib3
 import re
 import urllib.parse
 import logging
 from typing import Optional
+
+# Disable SSL verification warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Add workspace to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -74,7 +78,7 @@ def download_pdf(pdf_url: str, title: str) -> Optional[str]:
     for url in urls_to_try:
         logger.info(f"Attempting download from: {url}")
         try:
-            response = requests.get(url, headers=DEFAULT_HEADERS, timeout=TIMEOUT_SECONDS, stream=True)
+            response = requests.get(url, headers=DEFAULT_HEADERS, timeout=TIMEOUT_SECONDS, stream=True, verify=False)
             if response.status_code == 200:
                 with open(dest_path, "wb") as f:
                     for chunk in response.iter_content(chunk_size=8192):
