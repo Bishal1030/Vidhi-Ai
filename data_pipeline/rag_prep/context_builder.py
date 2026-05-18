@@ -28,21 +28,81 @@ class LegalContextBuilder:
         filter_meta: Optional[Dict[str, Any]] = None
     ) -> List[Dict[str, Any]]:
         """
-        Embeds query and retrieves top K matching chunks from Qdrant.
+        Retrieves top matching chunks from Qdrant. 
+        Guarantees coverage across multiple acts by querying each indexed act individually 
+        to ensure smaller specialized acts (like the Citizenship Act) are not starved by 
+        extremely large documents (like the Constitution).
         """
+        import json
         logger.info(f"Retrieving top {limit} relevant chunks for query: '{query}'...")
         query_vector = self.embedder.embed_query(query)
         if not query_vector:
             logger.error("Failed to generate embedding vector for the search query.")
             return []
+
+        # If a specific filter is already passed, run single search
+        if filter_meta:
+            return self.vector_store.search_collection(
+                collection_name=self.collection_name,
+                query_vector=query_vector,
+                filter_meta=filter_meta,
+                limit=limit
+            )
+
+        # Dynamically discover all act titles from structured json directories
+        act_titles = []
+        try:
+            from data_pipeline.ingestion.config import STRUCTURED_ACTS_DIR
+            if os.path.exists(STRUCTURED_ACTS_DIR):
+                for file_name in os.listdir(STRUCTURED_ACTS_DIR):
+                    if file_name.endswith(".json"):
+                        with open(os.path.join(STRUCTURED_ACTS_DIR, file_name), "r", encoding="utf-8") as file:
+                            data = json.load(file)
+                            title = data.get("nepali_title") or data.get("title")
+                            if title and title not in act_titles:
+                                act_titles.append(title)
+        except Exception as e:
+            logger.warning(f"Failed to dynamically load act titles from config: {e}. Falling back to default search.")
+
+        # Run vector search for each act to guarantee balanced context retrieval
+        all_hits = []
+        if act_titles:
+            logger.info(f"Dynamically discovered acts for retrieval: {act_titles}")
             
-        hits = self.vector_store.search_collection(
-            collection_name=self.collection_name,
-            query_vector=query_vector,
-            filter_meta=filter_meta,
-            limit=limit
-        )
-        return hits
+            # Determine limit per act, giving a proportional slice to each act to ensure representation
+            limit_per_act = max(4, limit // len(act_titles))
+            logger.info(f"Retrieval quota per act: {limit_per_act} chunks")
+            
+            for title in act_titles:
+                logger.info(f"Querying Qdrant for act: '{title}'...")
+                # Search using the nepali_title filter
+                hits = self.vector_store.search_collection(
+                    collection_name=self.collection_name,
+                    query_vector=query_vector,
+                    filter_meta={"nepali_title": title},
+                    limit=limit_per_act
+                )
+                all_hits.extend(hits)
+        else:
+            # Fallback: simple unfiltered search
+            hits = self.vector_store.search_collection(
+                collection_name=self.collection_name,
+                query_vector=query_vector,
+                limit=limit
+            )
+            all_hits.extend(hits)
+
+        # Deduplicate hits
+        seen_ids = set()
+        deduped_hits = []
+        for hit in all_hits:
+            if hit["id"] not in seen_ids:
+                seen_ids.add(hit["id"])
+                deduped_hits.append(hit)
+
+        # Sort the combined quota-balanced results by score descending to present best hits first
+        deduped_hits.sort(key=lambda x: x["score"], reverse=True)
+        return deduped_hits
 
     def build_context(self, hits: List[Dict[str, Any]]) -> str:
         """

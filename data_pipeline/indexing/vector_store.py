@@ -6,8 +6,9 @@ from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 
-# Load env credentials
-load_dotenv()
+# Load env credentials from data_pipeline/.env
+env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.env"))
+load_dotenv(env_path)
 
 logger = logging.getLogger("vector_store")
 
@@ -40,7 +41,20 @@ class LegalVectorStore:
             existing = [c.name for c in collections_res.collections]
             
             if collection_name in existing:
-                logger.info(f"Collection '{collection_name}' already exists.")
+                logger.info(f"Collection '{collection_name}' already exists. Ensuring payload indexes exist...")
+                try:
+                    self.client.create_payload_index(
+                        collection_name=collection_name,
+                        field_name="nepali_title",
+                        field_schema=models.PayloadSchemaType.KEYWORD
+                    )
+                    self.client.create_payload_index(
+                        collection_name=collection_name,
+                        field_name="act_title",
+                        field_schema=models.PayloadSchemaType.KEYWORD
+                    )
+                except Exception as ex:
+                    logger.warning(f"Payload index creation check warning: {ex}")
                 return True
                 
             logger.info(f"Collection '{collection_name}' does not exist. Creating...")
@@ -51,7 +65,18 @@ class LegalVectorStore:
                     distance=models.Distance.COSINE
                 )
             )
-            logger.info(f"Collection '{collection_name}' created successfully.")
+            logger.info("Creating keyword payload indexes in Qdrant...")
+            self.client.create_payload_index(
+                collection_name=collection_name,
+                field_name="nepali_title",
+                field_schema=models.PayloadSchemaType.KEYWORD
+            )
+            self.client.create_payload_index(
+                collection_name=collection_name,
+                field_name="act_title",
+                field_schema=models.PayloadSchemaType.KEYWORD
+            )
+            logger.info(f"Collection '{collection_name}' created successfully with payload indexes.")
             return True
         except Exception as e:
             logger.error(f"Failed to verify/create Qdrant collection: {e}")

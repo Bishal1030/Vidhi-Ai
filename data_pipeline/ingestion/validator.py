@@ -203,26 +203,24 @@ class LegalDocValidator:
 
 def run_validation(json_path: str) -> bool:
     """Convenience function to run schema and citation validation on a JSON path."""
-    print(f"\n=======================================================")
     print(f"VALIDATING HIERARCHICAL LEGAL ACT: {os.path.basename(json_path)}")
-    print(f"=======================================================")
     
     validator = LegalDocValidator(json_path)
     if not validator.load_data():
-        print(f"❌ ERROR: Failed to load file: {validator.errors[0]}")
+        print(f"ERROR: Failed to load file: {validator.errors[0]}")
         return False
         
     # Schema check
     schema_ok = validator.validate_schema()
     if schema_ok:
-        print("✅ SCHEMA COMPLIANCE: Strict schema matches perfectly.")
+        print("SCHEMA COMPLIANCE: Strict schema matches perfectly.")
     else:
-        print(f"❌ SCHEMA COMPLIANCE FAILED: Found {len(validator.errors)} strict errors.")
+        print(f"SCHEMA COMPLIANCE FAILED: Found {len(validator.errors)} strict errors.")
         for err in validator.errors[:10]:
             print(f"   - [ERROR] {err}")
             
     if validator.warnings:
-        print(f"⚠️ SCHEMA WARNINGS: Found {len(validator.warnings)} visual/structural warnings.")
+        print(f"SCHEMA WARNINGS: Found {len(validator.warnings)} visual/structural warnings.")
         for warn in validator.warnings[:5]:
             print(f"   - [WARN] {warn}")
             
@@ -233,15 +231,15 @@ def run_validation(json_path: str) -> bool:
     print(f"   - Broken citations detected: {broken_refs}")
     
     if broken_refs > 0:
-        print(f"⚠️ CITATION ALERTS:")
+        print(f"CITATION ALERTS:")
         for source, citation, issue in issues[:10]:
             print(f"   - [{source}] contains reference '{citation}': {issue}")
             
     success = schema_ok and (broken_refs == 0)
     if success:
-        print("\n🏆 VALIDATION COMPLETED: Legal document structured with 100% integrity!")
+        print("VALIDATION COMPLETED: Legal document structured with 100% integrity!")
     else:
-        print("\n⚠️ VALIDATION COMPLETED: Structure conforms, but citation warnings need manual healing or checking.")
+        print("VALIDATION COMPLETED: Structure conforms, but citation warnings need manual healing or checking.")
         
     return schema_ok
 
