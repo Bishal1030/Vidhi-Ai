@@ -1,0 +1,23 @@
+# Python Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Environment Configuration
+.env
+
+# OS System Files
+.DS_Store
+Thumbs.db
+
+# Python Cache & Compiled Files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Large Data & PDF Cache Files (to keep repo lightweight)
+data/raw_documents/*.pdf
+data/processed_text/*.txt
