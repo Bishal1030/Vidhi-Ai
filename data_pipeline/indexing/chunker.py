@@ -233,23 +233,4 @@ def chunk_file(json_path: str) -> List[Dict[str, Any]]:
     chunker = LegalChunker(act_data)
     return chunker.generate_chunks()
 
-if __name__ == "__main__":
-    # Test chunking on Constitution structured JSON
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-    from data_pipeline.ingestion.config import STRUCTURED_ACTS_DIR
-    
-    test_json = os.path.join(STRUCTURED_ACTS_DIR, "नेपालको_संविधान.json")
-    if os.path.exists(test_json):
-        chunks = chunk_file(test_json)
-        print(f"Generated {len(chunks)} chunks successfully.")
-        if chunks:
-            print("First chunk sample:")
-            print(json.dumps(chunks[0], indent=2, ensure_ascii=False))
-            print("\nMiddle chunk sample (containing clause):")
-            # Let's find a chunk that is a clause
-            for chunk in chunks:
-                if chunk["metadata"]["type"] == "clause":
-                    print(json.dumps(chunk, indent=2, ensure_ascii=False))
-                    break
-    else:
-        print("JSON file not found. Run structurer first.")
+

@@ -179,13 +179,4 @@ class LegalVectorStore:
             logger.error(f"Qdrant vector search failed: {e}")
             return []
 
-if __name__ == "__main__":
-    # Test Qdrant connection
-    logging.basicConfig(level=logging.INFO)
-    try:
-        store = LegalVectorStore()
-        collections = store.client.get_collections()
-        print("Remote Qdrant collections:")
-        print([c.name for c in collections.collections])
-    except Exception as e:
-        print("Failed to run vector store check:", e)
+

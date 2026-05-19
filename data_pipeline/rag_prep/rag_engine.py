@@ -1,7 +1,7 @@
 import os
 import sys
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any
 from dotenv import load_dotenv
 
 # Add workspace to path
@@ -131,44 +131,4 @@ class LegalRAGEngine:
             "sources": sources
         }
 
-if __name__ == "__main__":
-    import sys
-    import json
-    
-    if len(sys.argv) > 1:
-        # Set all loggers to ERROR to prevent logs from contaminating stdout JSON
-        logging.basicConfig(level=logging.ERROR)
-        logging.getLogger("rag_engine").setLevel(logging.ERROR)
-        logging.getLogger("context_builder").setLevel(logging.ERROR)
-        logging.getLogger("vector_store").setLevel(logging.ERROR)
-        logging.getLogger("embedder").setLevel(logging.ERROR)
-        
-        query = sys.argv[1]
-        try:
-            engine = LegalRAGEngine()
-            result = engine.ask_question(query, limit=12)
-            print(json.dumps(result, ensure_ascii=False))
-        except Exception as err:
-            print(json.dumps({"error": str(err)}, ensure_ascii=False))
-        sys.exit(0)
 
-    # Test RAG Engine with a real query
-    logging.basicConfig(level=logging.INFO)
-    try:
-        engine = LegalRAGEngine()
-        
-        # Test Query
-        question = "के नेपाली नागरिकलाई नागरिकताबाट वञ्चित गर्न सकिन्छ?"
-        result = engine.ask_question(question, limit=4)
-        
-        print("\n=========================================================")
-        print(f"QUESTION: {result['query']}")
-        print("=========================================================")
-        print("\nANSWER:")
-        print(result['answer'])
-        print("\n=========================================================")
-        print("SOURCES SIDEBAR METADATA:")
-        print(json.dumps(result['sources'], indent=2, ensure_ascii=False))
-        print("=========================================================")
-    except Exception as err:
-        print(f"RAG Engine Initialization or execution failed: {err}")

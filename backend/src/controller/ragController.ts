@@ -12,7 +12,7 @@ export class RAGController {
             
             if (!query || typeof query !== 'string' || query.trim() === '') {
                 res.status(400).json({
-                    error: "कृपया प्रश्न प्रविष्ट गर्नुहोस् (Query parameter is required)."
+                    error: "Query parameter is required"
                 });
                 return;
             }
@@ -22,7 +22,7 @@ export class RAGController {
         } catch (error: any) {
             console.error(`Controller Error: ${error.message}`);
             res.status(500).json({
-                error: "आन्तरिक त्रुटि उत्पन्न भयो।",
+                error: "something went wrong",
                 details: error.message
             });
         }

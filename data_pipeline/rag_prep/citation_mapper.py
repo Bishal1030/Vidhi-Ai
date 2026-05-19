@@ -1,11 +1,6 @@
-import os
-import sys
 import re
 import logging
 from typing import List, Dict, Any, Tuple
-
-# Add workspace to path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 logger = logging.getLogger("citation_mapper")
 
@@ -72,48 +67,4 @@ class LegalCitationMapper:
                 
         return mapped_answer, used_citations
 
-if __name__ == "__main__":
-    # Test citation mapper
-    logging.basicConfig(level=logging.INFO)
-    mapper = LegalCitationMapper()
-    
-    # Mock retrieved hits
-    mock_hits = [
-        {
-            "score": 0.89,
-            "payload": {
-                "citation": "नेपालको संविधान, धारा १० को उपधारा (१)",
-                "act_title": "नेपालको संविधान",
-                "nepali_title": "नेपालको संविधान",
-                "section_id": "१०",
-                "section_title": "नागरिकताबाट वञ्चित नगरिने",
-                "raw_text": "कुनै पनि नेपाली नागरिकलाई नागरिकता प्राप्त गर्ने अधिकारबाट वञ्चित गरिने छैन।"
-            }
-        },
-        {
-            "score": 0.85,
-            "payload": {
-                "citation": "नेपालको संविधान, धारा ११ को उपधारा (२)",
-                "act_title": "नेपालको संविधान",
-                "nepali_title": "नेपालको संविधान",
-                "section_id": "११",
-                "section_title": "नेपालको नागरिक ठहरिने",
-                "raw_text": "यो संविधान प्रारम्भ हुनुभन्दा तत्काल अघि वंशजको आधारमा नागरिकता प्राप्त..."
-            }
-        }
-    ]
-    
-    mock_llm_answer = (
-        "नेपालको संविधान अनुसार कुनै पनि नेपाली नागरिकलाई नागरिकताबाट वञ्चित गर्न पाइने छैन [CITATION 1]। "
-        "त्यस्तै, यो संविधान प्रारम्भ हुनु अघि वंशजको आधारमा नागरिकता पाएका व्यक्तिहरू पनि नेपालको नागरिक ठहरिनेछन् [CITATION 2]।"
-    )
-    
-    mapped_text, sources = mapper.map_citations(mock_llm_answer, mock_hits)
-    
-    print("\nORIGINAL LLM ANSWER:")
-    print(mock_llm_answer)
-    print("\nMAPPED ANSWER WITH PREMIUM CITATIONS:")
-    print(mapped_text)
-    print("\nCOMPILED CITATION SIDEBAR METADATA:")
-    import json
-    print(json.dumps(sources, indent=2, ensure_ascii=False))
+
