@@ -51,27 +51,6 @@ export function WelcomeScreen({ onSuggestClick }: WelcomeScreenProps) {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5 font-sans">
-          <HelpCircle className="w-4 h-4" /> Recommended Queries
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {suggestions.map((item, idx) => (
-            <button
-              key={idx}
-              onClick={() => onSuggestClick(item.text)}
-              className="text-left border-2 border-black p-4 bg-white rounded shadow-[3px_3px_0_0_#000] hover:translate-y-px hover:shadow-none transition-all duration-150 group cursor-pointer"
-            >
-              <span className="text-xs font-bold text-zinc-800 group-hover:underline block mb-1">
-                {item.label}
-              </span>
-              <p className="text-xs font-medium text-zinc-600 leading-snug line-clamp-2">
-                {item.text}
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
