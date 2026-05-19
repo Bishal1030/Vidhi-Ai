@@ -295,27 +295,4 @@ def process_extracted_text_file(txt_path: str, title: str, source_url: str, pdf_
             err_f.write(f"Failed structuring {txt_path}: {e}\n")
         return None
 
-if __name__ == "__main__":
-    # Test on processed constitution text
-    txt_file = os.path.join(PROCESSED_TEXT_DIR, "नेपालको_संविधान.txt")
-    if os.path.exists(txt_file):
-        dest = process_extracted_text_file(
-            txt_file,
-            "नेपालको संविधान",
-            "https://lawcommission.gov.np/category/1807/",
-            "https://giwmscdnone.gov.np/media/pdf_upload/%E0%A4%A8%E0%A5%87%E0%A4%AA%E0%A4%BE%E0%A4%B2%E0%A4%95%E0%A5%8B%20%E0%A4%B8_%E0%A4%82%E0%A4%B5%E0%A4%BF%E0%A4%A7%E0%A4%BE%E0%A4%A8%20unicode%20%E0%A4%AD%E0%A4%BE%E0%A4%A6%E0%A5%8D%E0%A4%B0%20%E0%A5%A8%E0%A5%A6%E0%A5%AE%E0%A5%A7_mtbuyjt.pdf"
-        )
-        print(f"Structured file saved to: {dest}")
-        
-        # Check structured JSON properties
-        if dest and os.path.exists(dest):
-            with open(dest, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            print("Act:", data["title"])
-            print("Parts count:", len(data["parts"]))
-            if data["parts"]:
-                print("Part 1:", data["parts"][0]["identifier"], "-", data["parts"][0]["title"])
-                if data["parts"][0]["chapters"] and data["parts"][0]["chapters"][0]["sections"]:
-                    print("Section 1 in Part 1:", data["parts"][0]["chapters"][0]["sections"][0]["identifier"], "-", data["parts"][0]["chapters"][0]["sections"][0]["title"])
-    else:
-        print("Processed text file does not exist. Run extractor.py first.")
+

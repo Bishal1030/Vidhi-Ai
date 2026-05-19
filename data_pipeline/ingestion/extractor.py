@@ -231,19 +231,4 @@ def extract_text_from_pdf(pdf_path: str) -> Optional[str]:
         logger.error(f"Failed to save processed text to {dest_path}: {e}")
         return extracted_text
 
-if __name__ == "__main__":
-    # Test text extraction and cleaning on downloaded constitution PDF
-    pdf_file = os.path.join(RAW_DOCS_DIR, "नेपालको_संविधान.pdf")
-    if os.path.exists(pdf_file):
-        text = extract_text_from_pdf(pdf_file)
-        if text:
-            print("Successfully extracted text. Printing page 7 sample ( मौलिक हक र कर्तव्य ):")
-            # Find sample page
-            p7_match = re.search(r"--- PAGE 7 ---\n(.*?)\n\n--- PAGE 8 ---", text, re.DOTALL)
-            if p7_match:
-                print(p7_match.group(1)[:1200])
-            else:
-                # Fallback to search keyword
-                print(text[:1200])
-    else:
-        print("Test PDF does not exist. Run fetcher.py first.")
+

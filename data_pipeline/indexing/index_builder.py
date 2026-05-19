@@ -1,7 +1,6 @@
 import os
 import sys
 import logging
-import argparse
 import time
 from typing import List, Dict, Any
 
@@ -119,11 +118,4 @@ class LegalIndexBuilder:
                 
         return all_success
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Vidhi-Ai Legal Search Index Builder")
-    parser.add_argument("--collection", type=str, default="vidhi_legal_acts", help="Qdrant collection name")
-    parser.add_argument("--openai", action="store_true", help="Use OpenAI text-embedding-3-small embeddings")
-    args = parser.parse_args()
-    
-    builder = LegalIndexBuilder(collection_name=args.collection, use_openai=args.openai)
-    builder.build_full_index()
+

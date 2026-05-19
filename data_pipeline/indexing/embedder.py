@@ -1,5 +1,4 @@
 import os
-import sys
 import logging
 from typing import List
 from dotenv import load_dotenv
@@ -83,13 +82,4 @@ class LegalEmbedder:
             
         return []
 
-if __name__ == "__main__":
-    # Test local multilingual embedder
-    logging.basicConfig(level=logging.INFO)
-    embedder = LegalEmbedder()
-    test_text = "नेपालको स्वतन्त्रता, सार्वभौमसत्ता, भौगोलिक अखण्डता"
-    
-    vector = embedder.embed_query(test_text)
-    print("Test text:", test_text)
-    print("Embedding Vector length:", len(vector))
-    print("Embedding Vector preview (first 5 elements):", vector[:5])
+

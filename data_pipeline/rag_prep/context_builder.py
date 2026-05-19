@@ -129,18 +129,4 @@ class LegalContextBuilder:
             
         return "\n".join(context_parts)
 
-if __name__ == "__main__":
-    # Test query context retrieval
-    logging.basicConfig(level=logging.INFO)
-    builder = LegalContextBuilder()
-    
-    test_query = "नागरिकता सम्बन्धी के व्यवस्था छ?"
-    hits = builder.retrieve_relevant_chunks(test_query, limit=3)
-    
-    print("\nRETRIEVED HITS:")
-    for i, h in enumerate(hits):
-        print(f"Hit {i+1} [Score {h['score']:.4f}]: {h['payload']['citation']}")
-        
-    context = builder.build_context(hits)
-    print("\nGENERATED LLM CONTEXT:")
-    print(context)
+

@@ -139,12 +139,4 @@ def scrape_category(category_url: str) -> list:
         
     return documents
 
-if __name__ == "__main__":
-    # Test scraping the Constitution category
-    try:
-        docs = scrape_category(CONSTITUTION_CATEGORY_URL)
-        print(f"Scraped {len(docs)} documents successfully.")
-        import json
-        print(json.dumps(docs, indent=2, ensure_ascii=False))
-    except Exception as e:
-        print(f"Failed to scrape: {e}")
+
